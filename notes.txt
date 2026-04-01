@@ -1,0 +1,11 @@
+npm install express@5 bcrypt dotenv nanoid pg
+npm install vitest eslint node-pg-migrate nodemon supertest --save-dev
+npx eslint --init
+
+psql -U postgres
+CREATE DATABASE authapi; CREATE DATABASE authapi_test;
+npm run migrate create "create table users"
+npm run migrate create "create table authentications"
+npm run migrate up
+
+npm install instances-container
