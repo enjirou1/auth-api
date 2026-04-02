@@ -9,3 +9,68 @@ npm run migrate create "create table authentications"
 npm run migrate up
 
 npm install instances-container
+
+Buat Security Group
+- Add Inbound Rules: TCP 3000 Anywhere Application Port & SSH 22 Anywhere SSH Port
+- Add Inbound Rules: TCP 5432 Anywhere Database Port
+
+Buat EC2
+- Ubuntu
+- t3.micro
+- Buat key pair RSA .pem
+- Select existing security Group
+- Launch Instance
+
+Buat Cluster RDS
+- Engine options, pilih engine PostgreSQL, pilih versi dibawah 15
+- Choose a database creation method Full configuration
+- Isi DB instance identifier, Master username, Master password
+- Uncheck Enable storage autoscaling
+- Public access No
+- Pilih security group database
+- Uncheck Turn on Performance Insight
+- Uncheck Enable automated backups
+- Enable auto minor version upgrade
+
+Akses Database
+- Buka terminal di local
+- psql --host auth-api.chii6iaiirju.ap-southeast-1.rds.amazonaws.com --username postgres
+- password supersecret
+- CREATE DATABASE authapi; CREATE DATABASE authapi_test;
+
+Akses EC2
+- Buka Terminal/PowerShell/CMD pada directory di mana Anda menyimpan key pairs (key.pem) untuk akses EC2 instance
+- ssh -i "<key>.pem" <user>@<alamat instance EC2>
+- Kalau error UNPROTECTED PRIVATE KEY FILE
+  icacls "forum-api-webserver.pem" /remove "Authenticated Users"
+  icacls "forum-api-webserver.pem" /remove "Users"
+  icacls "forum-api-webserver.pem" /remove "Everyone"
+  icacls "forum-api-webserver.pem" /inheritance:r
+  icacls "forum-api-webserver.pem" /grant:r %username%:R
+  icacls "forum-api-webserver.pem"
+- Kemudian akses ec2 lagi
+- Install Node js
+  curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
+  sudo apt-get install -y nodejs
+  sudo npm install pm2 -g
+
+Setup Project
+- git clone https://github.com/enjirou1/auth-api.git
+- cd auth-api
+- npm install
+- touch .env
+- vim .env, tekan tombol insert untuk edit lalu esc untuk keluar mode kemudian :wq untuk keluar
+- mkdir -p config/database
+- touch config/database/test.json
+- vim config/database/test.json
+- npm run migrate up
+- npm run migrate:test up
+- npm run test
+- pm2 start npm --name "auth-api" --run "start"
+
+Pasang CI/CD
+- Buat file ci yaml
+- Buat branch baru
+- Jalankan pull request
+- Buat file cd yaml
+- Coba merge request master
