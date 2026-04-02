@@ -45,7 +45,7 @@ jobs:
         CI: true
         HOST: 0.0.0.0
         PORT: 3000
-        PGHOST: auth-api.chii6iaiirju.ap-southeast-1.rds.amazonaws.com
+        PGHOST: localhost
         PGPORT: 5432
         PGUSER: postgres
         PGPASSWORD: supersecret
