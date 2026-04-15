@@ -94,3 +94,27 @@ Config Nginx sebagai Reverse Proxy Server
   }
 - Simpan lalu sudo systemctl restart nginx
 - Akses dengan Public IPv4 address
+
+Terapkan Limit Access
+- sudo vim /etc/nginx/sites-available/default
+- Pada baris awwal berkas tambahkan limit_req_zone $binary_remote_addr zone=one:10m rate=30r/m;
+- Tambahkan dalam blok location / limit_req zone=one;
+- limit_req zone=one;
+- Jika diakses lebih dari 1 request / 2 detik maka error 503
+- Hapus inbound traffic yang langsung mengarah ke aplikasi (Custom TCP) supaya jalur untuk mengakses aplikasi hanya tersedia melalui reverse proxy server
+
+Domain
+- Buat domain
+- Tambahkan DNS record tipe A untuk @ dan www dengan nilai target public IP EC2 instance
+- sudo vim /etc/nginx/sites-available/default
+- Tulis hostname di server_name di dalam blok server
+- sudo systemctl restart nginx
+
+HTTPS
+- sudo apt-get update
+- sudo apt-get install python3-certbot-nginx -y
+- sudo certbot --nginx -d yourdomain.com -d www.yourdomain.com
+  Please choose whether or not to redirect HTTP traffic to HTTPS … : 2 (Redirect)
+
+Swagger
+- npm install swagger-jsdoc swagger-ui-express --save
